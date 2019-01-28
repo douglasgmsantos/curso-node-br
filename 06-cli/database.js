@@ -43,6 +43,45 @@ class Database{
         return dataFilter;
     }
 
+    async removeById(id){
+        if(!id){
+            return await this.insertHeroFile([])
+        }
+        const data = await this.getDataFile();
+        const index = data.findIndex(hero =>  hero.id === parseInt(id))
+        
+        if(index == -1){
+            throw Error("O usuário informado não existe.ß")
+        }
+
+        data.splice(index, 1);
+        await this.insertHeroFile(data)
+
+        return true;
+    }
+
+    async updateById(id, newData){
+        const data = await this.getDataFile();
+        const index = data.findIndex( hero => hero.id === parseInt(id))
+
+        if(index == -1){
+            throw Error("O usuário informado não existe.ß")
+        }
+
+        const actual = data[index];
+        const objUpdate = {
+            ...actual,
+            ...newData
+        }
+        
+        data.splice(index, 1);
+        
+        return await this.insertHeroFile([
+            ...data,
+            objUpdate
+        ])
+    }
+
 }
 
 module.exports = new Database();
