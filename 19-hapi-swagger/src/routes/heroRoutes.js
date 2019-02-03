@@ -1,10 +1,6 @@
 const BaseRoute = require('./base/baseRoute')
 const Joi = require('joi')
 
-const failAction = function (request, h, err){
-    throw err;
-}
-
 class HeroRoutes extends BaseRoute {
     constructor(db) {
         super()
@@ -15,37 +11,13 @@ class HeroRoutes extends BaseRoute {
         return {
             path: '/herois',
             method: 'GET',
-            config:{
+            config: {
                 tags: ['api'],
-                description: 'Deve listar herois',
-                notes: 'Pode paginar resultados e filtrar por nome',
-                validate: {
-                    failAction,
-                    query:{
-                        skip: Joi.number().integer().default(0),
-                        limit: Joi.number().integer().default(10),
-                        nome: Joi.string().min(3).max(100),
-                    }
-                }
+                description: 'listar herois',
+                notes: 'retorna a base inteira de herois'
             },
-            handler: (request, headers) =>{
-                try{
-                    const {
-                        limit, skip, nome
-                    } = request.query
-
-                    let query =  nome ? {
-                        nome : {
-                            $regex: `.*${nome}*.`
-                        }
-                    } : { }
-
-                    return this.db.read(nome ? query : {}, skip, limit)
-                }catch(error){
-                    console.log("Erro no meu servidor", error)
-                    return error
-                }
-                
+            handler: (request, headers) => {
+                return this.db.read()
             }
         }
     }
@@ -55,10 +27,12 @@ class HeroRoutes extends BaseRoute {
             method: 'POST',
             config: {
                 tags: ['api'],
-                description: 'Deve cadastrar heroi',
-                notes: 'Deve cadastrar heroi pelo nome e poder',
+                description: 'cadastrar herois',
+                notes: 'Cadastra um heroi por nome e poder',
                 validate: {
-                    failAction,
+                    failAction: (request, h, err) => {
+                        throw err;
+                    },
                     payload: {
                         nome: Joi.string().max(100).required(),
                         poder: Joi.string().max(30).required()
@@ -78,16 +52,18 @@ class HeroRoutes extends BaseRoute {
             method: 'PATCH',
             config: {
                 tags: ['api'],
-                description: 'Deve atualizar heroi',
-                notes: 'Deve atualizar heroi pelo id',
+                description: 'atualizar herois',
+                notes: 'atualiza um heroi por ID',
                 validate: {
-                    failAction,
-                    payload: {
-                        nome: Joi.string().max(100),
-                        poder: Joi.string().max(30)
+                    failAction: (request, h, err) => {
+                        throw err;
                     },
                     params: {
                         id: Joi.string().required()
+                    },
+                    payload: {
+                        nome: Joi.string().max(100),
+                        poder: Joi.string().max(30)
                     }
                 },
 
@@ -105,10 +81,12 @@ class HeroRoutes extends BaseRoute {
             method: 'DELETE',
             config: {
                 tags: ['api'],
-                description: 'Deve deletar heroi',
-                notes: 'Deve deletar heroi pelo id',
+                description: 'remover herois',
+                notes: 'remove um heroi por id',
                 validate: {
-                    failAction,
+                    failAction: (request, h, err) => {
+                        throw err;
+                    },
                     params: {
                         id: Joi.string().required()
                     }
