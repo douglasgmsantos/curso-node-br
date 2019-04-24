@@ -9,7 +9,6 @@ const PostgresDB = require('./src/db/strategies/postgres/postgresSQLStrategy')
 const AuthRoutes = require('./src/routes/authRoutes')
 const UserSchema = require('./src/db/strategies/postgres/schemas/userSchema')
 
-
 const HapiSwagger = require('hapi-swagger')
 const Inert = require('inert')
 const Vision = require('vision')
